@@ -64,6 +64,7 @@
                 </a>
               <DropdownMenu slot="list">
                 <DropdownItem name="ownSpace">个人中心</DropdownItem>
+                <DropdownItem name="applyPermission">权限申请</DropdownItem>
                 <DropdownItem name="loginout" divided>退出登录</DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -175,6 +176,8 @@ export default {
     handleClickUserDropdown (name) {
       if (name === 'ownSpace') {
         util.openPage(this, 'ownspace_index', '个人中心');
+      } else if (name === 'applyPermission') {
+        util.openPage(this, 'apply_permission_index', '权限申请');
       } else if (name === 'loginout') {
         // 退出登录
         Cookies.remove('user');

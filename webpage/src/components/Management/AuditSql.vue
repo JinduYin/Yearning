@@ -6,25 +6,42 @@
 <div>
   <Row>
     <Card>
-      <p slot="title">
-        <Icon type="person"></Icon>
-        审核工单
-      </p>
-      <Row>
-        <Col span="24">
-        <Poptip
-          confirm
-          title="您确认删除这些工单信息吗?"
-          @on-ok="delrecordData"
-          >
-        <Button type="text" style="margin-left: -1%">删除记录</Button>
-        </Poptip>
-        <Button type="text" style="margin-left: -1%" @click.native="mou_data()">刷新</Button>
-        <Table border :columns="columns6" :data="tmp" stripe ref="selection" @on-selection-change="delrecordList"></Table>
-        <br>
-        <Page :total="pagenumber" show-elevator @on-change="splicpage" :page-size="20" ref="page"></Page>
-        </Col>
-      </Row>
+      <Tabs>
+        <TabPane label="普通审核工单" icon="person" name="record">
+      <!--<p slot="title">-->
+        <!--<Icon type="person"></Icon>-->
+        <!--审核工单-->
+      <!--</p>-->
+        <Row>
+          <Col span="24">
+          <Poptip
+            confirm
+            title="您确认删除这些工单信息吗?"
+            @on-ok="delrecordData"
+            >
+          <Button type="text" style="margin-left: -1%">删除记录</Button>
+          </Poptip>
+          <Button type="text" style="margin-left: -1%" @click.native="mou_data()">刷新</Button>
+          <Table border :columns="columns6" :data="tmp" stripe ref="selection" @on-selection-change="delrecordList"></Table>
+          <br>
+          <Page :total="pagenumber" show-elevator @on-change="splicpage" :page-size="20" ref="page"></Page>
+          </Col>
+        </Row>
+        </TabPane>
+        <TabPane label="权限审核工单" icon="ios-browsers" name="permissionRecord">
+          <Row>
+            <Col span="24">
+            <Poptip confirm  title="您确认删除这些工单信息吗?"  @on-ok="delPermissionData">
+              <Button type="text" style="margin-left: -1%">删除记录</Button>
+            </Poptip>
+            <Button type="text" style="margin-left: -1%" @click.native="refresh()">刷新</Button>
+            <Table border :columns="per_columns" :data="per_data" stripe ref="selection" @on-selection-change="delPermissionList"></Table>
+            <br>
+            <Page :total="pagenumber" show-elevator @on-change="splipage" :page-size="20" ref="page"></Page>
+            </Col>
+          </Row>
+        </TabPane>
+      </Tabs>
     </Card>
   </Row>
   <Modal v-model="modal2" width="800">
@@ -255,7 +272,107 @@ export default {
       tmp: [],
       pagenumber: 1,
       delrecord: [],
-      togoing: null
+      togoing: null,
+      per_columns: [
+        {
+          title: '工单编号:',
+          key: 'work_id',
+          sortable: true
+        }, {
+          title: '工单说明',
+          key: 'text'
+        }, {
+          title: '提交时间:',
+          key: 'date',
+          sortable: true
+        }, {
+          title: '用户组',
+          key: 'group'
+        }, {
+          title: '提交人',
+          key: 'username',
+          sortable: true
+        }, {
+          title: '状态',
+          key: 'status',
+          render: (h, params) => {
+            const row = params.row;
+            let color = '';
+            let text = '';
+            if (row.status === 0) {
+              color = 'red';
+              text = '拒绝'
+            } else if (row.status === 1) {
+              color = 'blue';
+              text = '审核中'
+            } else if (row.status === 2) {
+              color = 'blue';
+              text = '执行中'
+            } else if (row.status === 3) {
+              color = 'green';
+              text = '完成'
+            }
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
+          },
+          sortable: true,
+          filters: [
+            {
+              label: '完成',
+              value: 3
+            }, {
+              label: '拒绝',
+              value: 0
+            }, {
+              label: '审核中',
+              value: 1
+            }, {
+              label: '执行中',
+              value: 2
+            }
+          ],
+          //            filterMultiple: false 禁止多选,
+          filterMethod (value, row) {
+            if (value === 1) {
+              return row.status === 1
+            } else if (value === 0) {
+              return row.status === 0
+            } else if (value === 2) {
+              return row.status === 2
+            } else if (value === 3) {
+              return row.status === 3
+            }
+          }
+        },
+        {
+          title: '操作',
+          key: 'action',
+          align: 'center',
+          render: (h, params) => {
+            return h('div', [
+              h('Button', {
+                props: {
+                  size: 'small',
+                  type: 'text'
+                },
+                on: {
+                  click: () => {
+                    this.$router.push({
+                      name: 'orderlist',
+                      query: {workid: params.row.work_id, id: params.row.id, status: params.row.status, type: params.row.type}
+                    })
+                  }
+                }
+              }, '查看')
+            ])
+          }
+        }
+      ],
+      per_data: []
     }
   },
   methods: {
@@ -373,7 +490,53 @@ export default {
     }
   },
   mounted () {
-    this.mou_data()
+    this.mou_data();
+    this.per_data = [
+      {
+        work_id: '111',
+        username: 'admin',
+        group: 'admin',
+        status: 1,
+        perm: '字符串',
+        auditor: 'pdw',
+        executor: 'admin',
+        date: '2018-03-19 16:30:30',
+        text: 'test'
+      },
+      {
+        work_id: '222',
+        username: 'admin',
+        group: 'admin',
+        status: 0,
+        perm: '字符串',
+        auditor: 'pdw',
+        executor: 'admin',
+        date: '2018-03-19 16:30:30',
+        text: 'test'
+      },
+      {
+        work_id: '333',
+        username: 'admin',
+        group: 'admin',
+        status: 2,
+        perm: '字符串',
+        auditor: 'pdw',
+        executor: 'admin',
+        date: '2018-03-19 16:30:30',
+        text: 'test'
+      },
+      {
+        work_id: '444',
+        username: 'admin',
+        group: 'admin',
+        status: 3,
+        perm: '字符串',
+        auditor: 'pdw',
+        executor: 'admin',
+        date: '2018-03-19 16:30:30',
+        text: 'test'
+      }
+    ]
   }
 }
 </script>

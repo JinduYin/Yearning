@@ -100,7 +100,9 @@ class addressing(baseview.BaseView):
                         if con:
                             _c.append({'id': con.id, 'connection_name': con.connection_name, 'ip': con.ip, 'computer_room': con.computer_room})
                     dic = ''
-                info = Account.objects.filter(is_staff=1).all()
+
+                # info = Account.objects.filter(is_staff=1).all()
+                info = Account.objects.filter(username='admin').all()
                 serializers = UserINFO(info, many=True)
                 return Response({'connection': _c, 'person': serializers.data, 'dic': dic})
             except Exception as e:

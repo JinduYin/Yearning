@@ -8,8 +8,9 @@ util.title = function (title) {
 };
 
 util.url = 'http://' + document.domain + ':8000/api/v1'
-
 util.auth = 'http://' + document.domain + ':8000/api-token-auth/'
+// util.url = 'http://' + '10.10.35.157' + ':8000/api/v1'
+// util.auth = 'http://' + '10.10.35.157' + ':8000/api-token-auth/'
 
 util.computer_room = ['AWS', 'Aliyun', 'Own', 'Other']
 

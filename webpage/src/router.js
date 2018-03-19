@@ -75,6 +75,13 @@ export const appRouter = [
           require(['./components/Myself/own-space.vue'], resolve);
         }
       }, {
+        path: 'applpermi',
+        title: '权限申请',
+        name: 'apply_permission_index',
+        component: resolve => {
+          require(['./components/Myself/PermissionApply.vue'], resolve);
+        }
+      }, {
         path: 'message',
         title: '消息中心',
         name: 'message_index',
