@@ -101,7 +101,8 @@ class SqlRecord(models.Model):
     affectrow = models.CharField(max_length=100, null=True)
     sequence = models.CharField(max_length=50, null=True)
     backup_dbname = models.CharField(max_length=100, null=True) #下个版本可废弃
-    rollbackid = models.IntegerField(null=True) #下个版本可废弃
+    execute_time = models.CharField(max_length=150, null=True)
+    SQLSHA1 = models.TextField(null=True)
 
 
 class Todolist(models.Model):
@@ -138,3 +139,26 @@ class globalpermissions(models.Model):
 class grained(models.Model):
     username = models.CharField(max_length=50,db_index=True)
     permissions = JSONField()
+
+
+class PermOrder(models.Model):
+    '''
+    权限工单提交表
+    '''
+
+    OrderStatus = (
+        (0, '拒绝'),
+        (1, '审核中'),
+        (2, '执行中'),
+        (3, '完成')
+    )
+
+    username = models.CharField(max_length=50, blank=True)       # 工单提交人
+    usergroup = models.CharField(max_length=50, blank=True)      # 工单提交人组
+    department = models.CharField(max_length=50, blank=True)     # 工单提交人部门
+    status = models.IntegerField(choices=OrderStatus, default=1) # 工单状态 0 reject 1 audit 2 agree  3 complete
+    datetime = models.CharField(max_length=50, blank=True)       # 提交日期
+    permissions = JSONField()                                    # 权限列表
+    text = models.CharField(max_length=100)                      # 工单备注
+    auditor = models.CharField(max_length=50, blank=True)        # 工单审核人
+    executor = models.CharField(max_length=50, blank=True)       # 工单执行人

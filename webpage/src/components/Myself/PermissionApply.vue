@@ -116,6 +116,9 @@
               </RadioGroup>
             </FormItem>
           </template>
+          <FormItem label="备注">
+            <Input v-model="textarea" type="textarea" :autosize="{minRows: 2,maxRows: 5}" style="width: 400px;" placeholder="Enter something..."></Input>
+          </FormItem>
         </Form>
         <div slot="footer">
           <Button type="primary" @click="saveInfo">保存</Button>
@@ -135,6 +138,7 @@
       return {
         con: [],
         dicadd: [],
+        textarea: '',
         userInfo: {
           username: Cookies.get('user'),
           curGroup: '',
@@ -157,7 +161,8 @@
           ddlcon: [],
           dmlcon: [],
           diccon: [],
-          querycon: []
+          querycon: [],
+          person: []
         },
         auditorsValidate: {
           curAuditor: {
@@ -169,20 +174,15 @@
       };
     },
     methods: {
-      // 测试使用
-      setDefaultValue () {
-        this.userInfo.curGroup = 'guest';
-        this.userInfo.auditors = ['admin', 'test1', 'test3'];
-        this.permission.ddl = '1';
-        this.permission.ddlcon = ['base1', 'base3'];
-        this.con = ['base1', 'base2', 'base3']
-        this.dicadd = ['base2', 'base3']
-      },
       saveInfo () {
-        axios.put(util.url + '/orderpermission', {
-          'username': this.userInfo.username,
+        this.permission.person = [this.userInfo.curAuditor];
+        axios.post(util.url + '/userpermission/', {
+          'user': this.userInfo.username,
           'group': this.userInfo.curGroup,
-          'permission': JSON.stringify(this.permission)
+          'department': '',
+          'permission': JSON.stringify(this.permission),
+          'text': this.textarea,
+          'auditor': this.userInfo.curAuditor
         })
           .then(res => {
             this.$Notice.success({
@@ -198,7 +198,22 @@
       }
   },
     mounted () {
-      this.setDefaultValue()
+      axios.get(`${util.url}/userpermission/order?user=${Cookies.get('user')}`)
+        .then(res => {
+          this.permission = res.data.permission;
+          this.userInfo.username = res.data.username;
+          this.userInfo.curGroup = res.data.group;
+          this.con = res.data.con;
+          this.dicadd = res.data.dicadd;
+          this.userInfo.curAuditor = res.data.permission.person[0];
+          this.userInfo.auditors = res.data.audituser;
+        })
+        .catch(error => {
+          this.$Notice.error({
+            title: '警告',
+            desc: error
+          })
+        })
     }
   };
 </script>

@@ -6,15 +6,15 @@
 <div>
   <Row>
     <Card>
-      <Tabs>
+      <Tabs type="card" @on-click="chooseTab">
         <TabPane label="普通工单" icon="person" name="personOrder">
           <Row>
             <Col span="24">
-            <Table border :columns="columns6" :data="applytable" stripe size="small"></Table>
+            <Table border :columns="columns" :data="table_data" stripe size="small"></Table>
             </Col>
           </Row>
           <br>
-          <Page :total="pagenumber" show-elevator @on-change="currentpage" :page-size="20"></Page>
+          <Page :total="page_number" show-elevator @on-change="currentpage" :page-size="20"></Page>
         </TabPane>
         <TabPane label="权限工单" icon="ios-browsers" name="permissionOrder">
           <Row>
@@ -22,8 +22,14 @@
             <Table border :columns="columns_permission" :data="permission_data" stripe size="small"></Table>
             </Col>
           </Row>
+          <br>
+          <Page :total="perm_page_number" show-elevator @on-change="permissionpage" :page-size="20"></Page>
         </TabPane>
-        <Select v-model="username" slot="extra" style="width:200px" @on-change="selectChange">
+
+        <Select v-model="perm_user" v-if="tab_name === 'permissionOrder'" slot="extra" style="width:200px" @on-change="selectChangePerm">
+          <Option v-for="name in perm_users" :value="name" :key="name" >{{ name }}</Option>
+        </Select>
+        <Select v-model="user" v-else slot="extra" style="width:200px" @on-change="selectChange">
           <Option v-for="name in users" :value="name" :key="name" >{{ name }}</Option>
         </Select>
     </Tabs>
@@ -39,7 +45,7 @@ export default {
   name: 'put',
   data () {
     return {
-      columns6: [
+      columns: [
         {
           title: '工单编号:',
           key: 'work_id',
@@ -146,30 +152,35 @@ export default {
           }
         }
       ],
-      sql: [],
-      pagenumber: 1,
+      page_number: 1,
+      tab_name: '',
+      is_perm: '',
+      perm_page_number: 1,
       computer_room: util.computer_room,
       applytable: [],
       openswitch: false,
       modaltext: {},
       editsql: '',
-      username: '',
+      user: '',
+      perm_user: '',
       users: [],
+      perm_users: [],
+      table_data: [],
       columns_permission: [
         {
           title: '工单编号:',
-          key: 'work_id',
+          key: 'id',
           sortable: true
         }, {
           title: '工单说明',
           key: 'text'
         }, {
           title: '提交时间:',
-          key: 'date',
+          key: 'datetime',
           sortable: true
         }, {
           title: '用户组',
-          key: 'group'
+          key: 'usergroup'
         }, {
           title: '提交人',
           key: 'username',
@@ -244,8 +255,8 @@ export default {
                 on: {
                   click: () => {
                     this.$router.push({
-                      name: 'orderlist',
-                      query: {workid: params.row.work_id, id: params.row.id, status: params.row.status, type: params.row.type}
+                      name: 'permissiondetail',
+                      query: {data: params.row}
                     })
                   }
                 }
@@ -258,19 +269,34 @@ export default {
     }
   },
   methods: {
-    currentpage (vl) {
-        this.server_data(vl, this.username)
-    },
-
     selectChange (val) {
-      this.server_data(1, val)
+      this.currentpage(1, val);
     },
-
-    server_data (page, user) {
-      axios.get(`${util.url}/workorder/?user=${Cookies.get('user')}&page=${page}&filter_name=${user}`)
+    selectChangePerm (val) {
+      this.permissionpage(1, val)
+    },
+    chooseTab (val) {
+      this.tab_name = val;
+    },
+    currentpage (vl = 1, user = '') {
+      axios.get(`${util.url}/myorder/?user=${Cookies.get('user')}&page=${vl}&filter_name=${user}`)
         .then(res => {
-          this.applytable = res.data.data
-          this.pagenumber = parseInt(res.data.page.alter_number)
+          this.table_data = res.data.data;
+          this.table_data.forEach((item) => { (item.backup === 1) ? item.backup = '是' : item.backup = '否' });
+          this.page_number = parseInt(res.data.page.alter_number);
+          this.users = res.data.users
+        })
+        .catch(error => {
+          util.ajanxerrorcode(this, error)
+        })
+    },
+    permissionpage (vl = 1, user = '') {
+      axios.get(`${util.url}/userpermission/ordercommit?user=${Cookies.get('user')}&page=${vl}&filter_name=${user}`)
+        .then(res => {
+          this.permission_data = res.data.data;
+          this.permission_data.forEach((item) => { (item.backup === 1) ? item.backup = '是' : item.backup = '否' });
+          this.perm_page_number = parseInt(res.data.page.alter_number);
+          this.perm_users = res.data.users
         })
         .catch(error => {
           util.ajanxerrorcode(this, error)
@@ -278,62 +304,8 @@ export default {
     }
   },
   mounted () {
-    axios.get(`${util.url}/workorder/?user=${Cookies.get('user')}&page=1`)
-      .then(res => {
-        this.applytable = res.data.data
-        this.applytable.forEach((item) => { (item.backup === 1) ? item.backup = '是' : item.backup = '否' })
-        this.pagenumber = res.data.page.alter_number
-        this.users = res.data.users
-      })
-      .catch(error => {
-        util.ajanxerrorcode(this, error)
-      });
-    this.permission_data = [
-      {
-        work_id: '111',
-        username: 'admin',
-        group: 'admin',
-        status: 1,
-        perm: '字符串',
-        auditor: 'pdw',
-        executor: 'admin',
-        date: '2018-03-19 16:30:30',
-        text: 'test'
-      },
-      {
-        work_id: '222',
-        username: 'admin',
-        group: 'admin',
-        status: 0,
-        perm: '字符串',
-        auditor: 'pdw',
-        executor: 'admin',
-        date: '2018-03-19 16:30:30',
-        text: 'test'
-      },
-      {
-        work_id: '333',
-        username: 'admin',
-        group: 'admin',
-        status: 2,
-        perm: '字符串',
-        auditor: 'pdw',
-        executor: 'admin',
-        date: '2018-03-19 16:30:30',
-        text: 'test'
-      },
-      {
-        work_id: '444',
-        username: 'admin',
-        group: 'admin',
-        status: 3,
-        perm: '字符串',
-        auditor: 'pdw',
-        executor: 'admin',
-        date: '2018-03-19 16:30:30',
-        text: 'test'
-      }
-    ]
+    this.currentpage();
+    this.permissionpage()
   }
 }
 </script>

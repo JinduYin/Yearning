@@ -16,6 +16,7 @@ import ssl
 import time
 import ldap3
 import configparser
+from datetime import datetime
 
 
 def dingding(content: str = None, url: str = None):
@@ -157,3 +158,7 @@ def user_auth(username, password):
         return ret
     else:
         return False
+
+
+def get_current_datetime():
+    return datetime.now().strftime('"%Y-%m-%d %H:%M:%S"')

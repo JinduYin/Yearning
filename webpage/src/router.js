@@ -90,7 +90,8 @@ export const appRouter = [
         }
       }
     ]
-  }, {
+  },
+  {
     path: '/order',
     icon: 'folder',
     name: 'order',
@@ -213,6 +214,25 @@ export const orderList = {
   ]
 }
 
+export const permissionDetail = {
+  path: '/',
+  icon: 'home',
+  name: 'main',
+  title: '首页',
+  component: Index,
+  redirect: '/home',
+  children: [
+    {
+      path: 'permissiondetail',
+      title: '权限详情',
+      name: 'permissiondetail',
+      component: resolve => {
+        require(['./components/Order/PermissionDetail.vue'], resolve)
+      }
+    }
+  ]
+}
+
 export const myorder = {
   path: '/',
   icon: 'home',
@@ -237,6 +257,7 @@ export const myorder = {
   locking,
   ...appRouter,
   orderList,
+  permissionDetail,
   myorder,
   page404,
   page401,
