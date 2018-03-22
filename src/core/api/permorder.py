@@ -199,7 +199,28 @@ class UserPermission(baseview.BaseView):
             else:
                 params['executor'] = username
 
-            if PermOrder.objects.filter(**params).exists():
+            # 更新权限表
+            is_exists = PermOrder.objects.filter(**params).exists()
+            if status == 3 and is_exists:
+                # 更新权限表
+                tmp = dict(status=2)
+                tmp.update(**params)
+                perm = PermOrder.objects.filter(**tmp).first()
+                account = Account.objects.filter(username=username).first()
+                if perm:
+                    grained.objects.update_or_create(
+                        username=perm.username,
+                        defaults={'permissions': perm.permissions},
+                    )
+
+                    if perm.usergroup == 'admin' and account.is_staff != 1:
+                        account.is_staff = 1
+                    elif perm.usergroup == 'guest' and account.is_staff != 0:
+                        account.is_staff = 0
+
+                account.save()
+
+            if is_exists:
                 PermOrder.objects.filter(id=oid).update(**update_params)
                 return Response('%s--工单确认成功!' % username)
             else:
