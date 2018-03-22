@@ -256,7 +256,7 @@ export default {
                   click: () => {
                     this.$router.push({
                       name: 'permissiondetail',
-                      query: {data: params.row}
+                      query: {id: params.row.id}
                     })
                   }
                 }

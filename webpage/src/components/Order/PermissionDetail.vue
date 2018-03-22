@@ -24,6 +24,9 @@
           <FormItem label="权限分类：">
             <span>{{ userForm.group }}</span>
           </FormItem>
+          <FormItem label="备注">
+            <span>{{ userForm.text }}</span>
+          </FormItem>
         </Form>
         <hr style="height:1px;border:none;border-top:1px dashed #dddee1;" />
         <br>
@@ -66,9 +69,9 @@
 </template>
 
 <script>
-//  import Cookies from 'js-cookie'
-//  import util from '../../libs/util'
-//  import axios from 'axios'
+  import Cookies from 'js-cookie'
+  import util from '../../libs/util'
+  import axios from 'axios'
   const exchangetype = function typeok (vl) {
     if (typeof vl === 'string') {
       if (vl === '1') {
@@ -96,22 +99,29 @@
           ddl: '',
           ddlcon: ''
         },
-        data: ''
+        per_id: ''
       };
     },
     methods: {
     },
     mounted () {
-      this.data = this.$route.query.data;
-      for (var key in this.data.permissions) {
-          this.data.permissions[key] = exchangetype(this.data.permissions[key])
-      }
-      this.userForm = {
-        name: this.data.username,
-        group: this.data.usergroup,
-        department: this.data.department
-      };
-      this.permission = this.data.permissions
+      this.per_id = this.$route.query.id;
+      axios.get(`${util.url}/userpermission/detail?id=${this.per_id}&user=${Cookies.get('user')}`)
+        .then(res => {
+          this.userForm = {
+            name: res.data.username,
+            group: res.data.usergroup,
+            department: res.data.department,
+            text: res.data.text
+          };
+          this.permission = res.data.permissions
+          for (var key in this.permission) {
+            this.permission[key] = exchangetype(this.permission[key])
+          }
+        })
+        .catch(error => {
+          util.ajanxerrorcode(this, error)
+        });
     }
   };
 </script>

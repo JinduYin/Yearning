@@ -176,6 +176,9 @@
         <FormItem label="权限分类：">
           <span>{{ modal_perm_data.usergroup }}</span>
         </FormItem>
+        <FormItem label="备注">
+          <span>{{ modal_perm_data.text }}</span>
+        </FormItem>
       </Form>
       <hr style="height:1px;border:none;border-top:1px dashed #dddee1;" />
       <br>

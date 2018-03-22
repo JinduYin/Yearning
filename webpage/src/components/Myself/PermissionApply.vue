@@ -187,7 +187,11 @@
           .then(res => {
             this.$Notice.success({
               title: '通知',
-              desc: res.data
+              desc: res.data.msg
+            })
+            this.$router.push({
+              name: 'permissiondetail',
+              query: {id: res.data.id}
             })
             this.refreshuser()
           })

@@ -175,8 +175,11 @@ class UserPermission(baseview.BaseView):
         else:
 
             try:
-                PermOrder.objects.create(**data)
-                return Response('%s--工单提供成功!' % data.get('username'))
+                obj = PermOrder.objects.create(**data)
+                return Response(dict(
+                    msg='%s--工单提供成功!' % data.get('username'),
+                    id=obj.id
+                ))
             except Exception as e:
                 CUSTOM_ERROR.error(f'{e.__class__.__name__}: {e}')
                 return HttpResponse(status=500)
