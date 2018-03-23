@@ -44,6 +44,14 @@ class SQLgo(object):
             self.con.commit()
         return result
 
+    def select_execute(self, sql=None):
+        with self.con.cursor() as cursor:
+            sqllist = sql
+            cursor.execute(sqllist)
+            result = cursor.fetchall()
+            fields = cursor.description
+        return fields, result
+
     def search(self, sql=None):
         data_dict=[]
         id = 0

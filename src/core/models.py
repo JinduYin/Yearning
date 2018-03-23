@@ -59,7 +59,7 @@ class SqlOrder(models.Model):
     work_id = models.CharField(max_length=50, blank=True) #工单id
     username = models.CharField(max_length=50, blank=True) #账号
     status = models.IntegerField(blank=True) # 工单状态 0 disagree 1 agree 2 indeterminate 3 ongoing
-    type = models.SmallIntegerField(blank=True) #工单类型 0 DDL 1 DML
+    type = models.SmallIntegerField(blank=True) #工单类型 0 DDL 1 DML 2数据导出
     backup = models.SmallIntegerField(blank=True)  # 工单是否备份 0 not backup 1 backup
     bundle_id = models.IntegerField(db_index=True, null=True) # Matching with Database_list id Field
     date = models.CharField(max_length=100, blank=True) # 提交日期
@@ -103,6 +103,7 @@ class SqlRecord(models.Model):
     backup_dbname = models.CharField(max_length=100, null=True) #下个版本可废弃
     execute_time = models.CharField(max_length=150, null=True)
     SQLSHA1 = models.TextField(null=True)
+    file_name = models.CharField(max_length=150, null=True)  # 导出sql的文件名
 
 
 class Todolist(models.Model):
@@ -153,11 +154,12 @@ class PermOrder(models.Model):
         (3, '完成')
     )
 
+    work_id = models.CharField(max_length=50, blank=True)  # 工单id
     username = models.CharField(max_length=50, blank=True)       # 工单提交人
     usergroup = models.CharField(max_length=50, blank=True)      # 工单提交人组
     department = models.CharField(max_length=50, blank=True)     # 工单提交人部门
     status = models.IntegerField(choices=OrderStatus, default=1) # 工单状态 0 reject 1 audit 2 agree  3 complete
-    datetime = models.CharField(max_length=50, blank=True)       # 提交日期
+    date = models.CharField(max_length=100, blank=True)          # 提交日期
     permissions = JSONField()                                    # 权限列表
     text = models.CharField(max_length=100)                      # 工单备注
     auditor = models.CharField(max_length=50, blank=True)        # 工单审核人

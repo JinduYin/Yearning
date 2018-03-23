@@ -161,4 +161,4 @@ def user_auth(username, password):
 
 
 def get_current_datetime():
-    return datetime.now().strftime('"%Y-%m-%d %H:%M:%S"')
+    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')

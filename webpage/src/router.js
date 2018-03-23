@@ -122,6 +122,14 @@ export const appRouter = [
         component: resolve => {
           require(['./components/Order/GenIndex.vue'], resolve)
         }
+      }, {
+        path: 'exportsql',
+        name: 'exportsql',
+        title: '导出',
+        'icon': 'ios-download-outline',
+        component: resolve => {
+          require(['./components/Order/ExportSql.vue'], resolve)
+        }
       }
     ]
   }, {
@@ -233,6 +241,25 @@ export const permissionDetail = {
   ]
 }
 
+export const exportSqlDetail = {
+  path: '/',
+  icon: 'home',
+  name: 'main',
+  title: '首页',
+  component: Index,
+  redirect: '/home',
+  children: [
+    {
+      path: 'exportsqldetail',
+      title: '权限详情',
+      name: 'exportsqldetail',
+      component: resolve => {
+        require(['./components/Order/ExportSqlDetail.vue'], resolve)
+      }
+    }
+  ]
+}
+
 export const myorder = {
   path: '/',
   icon: 'home',
@@ -258,6 +285,7 @@ export const myorder = {
   ...appRouter,
   orderList,
   permissionDetail,
+  exportSqlDetail,
   myorder,
   page404,
   page401,

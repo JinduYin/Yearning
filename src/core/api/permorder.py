@@ -159,6 +159,7 @@ class UserPermission(baseview.BaseView):
     def post(self, request, args=None):
         try:
             data = dict(
+                work_id=util.workId(),
                 username=request.data['user'],
                 usergroup=request.data['group'],
                 department=request.data.get('department', ''),
@@ -166,7 +167,7 @@ class UserPermission(baseview.BaseView):
                 permissions=json.loads(request.data['permission']),
                 text=request.data['text'],
                 auditor=request.data['auditor'],
-                datetime=get_current_datetime(),
+                date=get_current_datetime(),
             )
 
         except KeyError as e:

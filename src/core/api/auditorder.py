@@ -3,6 +3,7 @@ import json
 from libs import baseview, util, call_inception
 from rest_framework.response import Response
 from django.db.models import Count
+from django.db.models import Q
 from django.http import HttpResponse
 from core.models import (
     SqlOrder,
@@ -12,9 +13,11 @@ from core.models import (
 )
 
 from core.task import order_push_message,rejected_push_messages
+from core.task import ExportSql
 
 conf = util.conf_path()
 addr_ip = conf.ipaddress
+EXPORT_SQL = '2'
 CUSTOM_ERROR = logging.getLogger('Yearning.core.views')
 
 
@@ -41,22 +44,30 @@ class audit(baseview.SuperUserpermissions):
         try:
             page = request.GET.get('page')
             username = request.GET.get('username')
+            order_type = request.GET.get('type')
         except KeyError as e:
             CUSTOM_ERROR.error(f'{e.__class__.__name__}: {e}')
             return HttpResponse(status=500)
         else:
             try:
-                page_number = SqlOrder.objects.filter(assigned=username).aggregate(alter_number=Count('id'))
+                if order_type == EXPORT_SQL:
+                    queryset = SqlOrder.objects.filter(type=2)
+                else:
+                    queryset = SqlOrder.objects.filter(~Q(type=2))
+                page_number = queryset.filter(assigned=username)\
+                    .aggregate(alter_number=Count('id'))
                 start = (int(page) - 1) * 20
                 end = int(page) * 20
+
                 info = SqlOrder.objects.raw(
                     '''
                     select core_sqlorder.*,core_databaselist.connection_name, \
                     core_databaselist.computer_room from core_sqlorder \
                     INNER JOIN core_databaselist on \
-                    core_sqlorder.bundle_id = core_databaselist.id where core_sqlorder.assigned = '%s'\
+                    core_sqlorder.bundle_id = core_databaselist.id 
+                    where core_sqlorder.type {} and core_sqlorder.assigned = '{}'\
                     ORDER BY core_sqlorder.id desc
-                    '''%username
+                    '''.format('= \'2\'' if order_type == EXPORT_SQL else '!=\'2\'', username)
                 )[start:end]
                 data = util.ser(info)
                 return Response({'page': page_number, 'data': data})
@@ -117,18 +128,21 @@ class audit(baseview.SuperUserpermissions):
                     from_user = request.data['from_user']
                     to_user = request.data['to_user']
                     order_id = request.data['id']
+                    is_export = request.data.get('is_export', 0)
                 except KeyError as e:
                     CUSTOM_ERROR.error(f'{e.__class__.__name__}: {e}')
                     return HttpResponse(status=500)
                 else:
                     try:
                         SqlOrder.objects.filter(id=order_id).update(status=3)
-                        order_push_message(addr_ip, order_id, from_user, to_user).start()
+                        if is_export:
+                            ExportSql(addr_ip, order_id, from_user, to_user).start()
+                        else:
+                            order_push_message(addr_ip, order_id, from_user, to_user).start()
                         return Response('工单执行成功!请通过记录页面查看具体执行结果')
                     except Exception as e:
                         CUSTOM_ERROR.error(f'{e.__class__.__name__}: {e}')
                         return HttpResponse(status=500)
-
             elif category == 'test':
                 try:
                     base = request.data['base']

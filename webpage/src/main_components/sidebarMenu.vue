@@ -64,6 +64,7 @@ export default {
         'ddledit': '',
         'dmledit': '',
         'indexedit': '',
+        'exportsql': '',
         'view-dml': '',
         'serach-sql': '',
         'management-user': '',
@@ -104,6 +105,7 @@ export default {
         this.filtermenulist.ddledit = c.ddl
         this.filtermenulist.indexedit = c.ddl
         this.filtermenulist.dmledit = c.dml
+        this.filtermenulist.exportsql = c.exportsql
         this.filtermenulist['view-dml'] = c.dic
         this.filtermenulist['serach-sql'] = c.query
         this.filtermenulist['management-user'] = c.user
