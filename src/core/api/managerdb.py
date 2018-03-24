@@ -104,7 +104,6 @@ class management_db(baseview.SuperUserpermissions):
                 DatabaseList.objects.get_or_create(
                     connection_name=data['connection_name'],
                     ip=data['ip'],
-                    computer_room=data['computer_room'],
                     username=data['username'],
                     password=data['password'],
                     port=data['port']

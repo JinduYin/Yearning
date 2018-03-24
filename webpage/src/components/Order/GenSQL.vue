@@ -16,14 +16,9 @@
       </p>
       <div class="edittable-test-con">
         <Form :model="formItem" :label-width="100" ref="formItem" :rules="ruleValidate">
-          <Form-item label="机房:" prop="computer_room">
-            <Select v-model="formItem.computer_room" placeholder="请选择" @on-change="Connection_Name">
-                <Option v-for="i in dataset" :value="i" :key="i">{{ i }}</Option>
-            </Select>
-          </Form-item>
           <Form-item label="连接名称:" prop="connection_name">
             <Select v-model="formItem.connection_name" placeholder="请选择" @on-change="DataBaseName">
-              <Option v-for="i in tableform.sqlname" :value="i.connection_name" :key="i.connection_name" filterable>{{ i.connection_name }}</Option>
+              <Option v-for="i in tableform.sqlname" :value="i" :key="i" filterable>{{ i }}</Option>
             </Select>
           </Form-item>
           <Form-item label="数据库库名:" prop="basename">
@@ -105,7 +100,7 @@
     <Row>
       <Card>
         <div class="step-header-con">
-          <h3 style="margin-left: 35%">TC SQL平台审核工单</h3>
+          <h3 style="margin-left: 35%">Yearning SQL平台审核工单</h3>
         </div>
         <p class="step-content"></p>
         <Form class="step-form" :label-width="100">
@@ -300,11 +295,6 @@ export default {
       openswitch: false,
       pass: false,
       ruleValidate: {
-        computer_room: [{
-          required: true,
-          message: '机房地址不得为空',
-          trigger: 'change'
-        }],
         connection_name: [{
           required: true,
           message: '连接名不得为空',
@@ -335,7 +325,6 @@ export default {
       },
       formItem: {
         text: '',
-        computer_room: '',
         connection_name: '',
         basename: '',
         tablename: '',
@@ -378,11 +367,6 @@ export default {
     editorInit: function () {
       require('brace/mode/mysql')
       require('brace/theme/xcode')
-    },
-    Connection_Name (index) {
-      if (index) {
-        this.ScreenConnection(index)
-      }
     },
     test_sql () {
       let ddl = ['select', 'insert', 'update', 'delete']
@@ -487,6 +471,7 @@ export default {
         .then(res => {
           this.item = res.data['connection']
           this.assigned = res.data['assigend']
+          this.tableform.sqlname = res.data.database;
         })
         .catch(error => {
           util.ajanxerrorcode(this, error)

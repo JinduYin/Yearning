@@ -74,7 +74,7 @@ class DatabaseList(models.Model):
     数据库连接信息表
     '''
     connection_name = models.CharField(max_length=50) #连接名
-    computer_room = models.CharField(max_length=50) #机房
+    computer_room = models.CharField(max_length=50, default='TC') #机房
     ip = models.CharField(max_length=100) #ip地址
     username = models.CharField(max_length=150) #数据库用户名
     port = models.IntegerField() #端口

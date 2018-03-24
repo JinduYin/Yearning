@@ -17,6 +17,8 @@ from libs.serializers import (
 
 CUSTOM_ERROR = logging.getLogger('Yearning.core.views')
 
+MYSQL_TABLE = []
+
 
 class addressing(baseview.BaseView):
 
@@ -41,21 +43,19 @@ class addressing(baseview.BaseView):
                     con_name = []
                     _type = request.data['permissions_type'] + 'con'
                     permission_spec = grained.objects.filter(username=request.user).first()
-                    for i in permission_spec.permissions[_type]:
-                        con_instance = DatabaseList.objects.filter(connection_name=i).first()
-                        if con_instance:
-                            con_name.append(
-                                {
-                                    'id': con_instance.id,
-                                    'connection_name': con_instance.connection_name,
-                                    'ip': con_instance.ip,
-                                    'computer_room': con_instance.computer_room
-                                })
+                    dbs = permission_spec.permissions[_type]
+                    cons = DatabaseList.objects.filter(connection_name__in=dbs)
+                    con_name = Area(cons, many=True).data
+
                     dic = ''
                 info = Account.objects.filter(is_staff=1).all()
                 serializers = UserINFO(info, many=True)
                 assigned = grained.objects.filter(username=request.user).first()
-                return Response({'connection': con_name, 'person': serializers.data, 'dic': dic, 'assigend': assigned.permissions['person']})
+                return Response({'connection': con_name,
+                                 'database': [con.get('connection_name') for con in con_name],
+                                 'person': serializers.data,
+                                 'dic': dic,
+                                 'assigend': assigned.permissions['person']})
             except Exception as e:
                 CUSTOM_ERROR.error(f'{e.__class__.__name__}: {e}')
                 return HttpResponse(status=500)
@@ -76,6 +76,7 @@ class addressing(baseview.BaseView):
                         port=_connection.port
                     ) as f:
                         res = f.basename()
+                        res = list(set(res) - set(MYSQL_TABLE))
                         return Response(res)
                 except Exception as e:
                     CUSTOM_ERROR.error(f'{e.__class__.__name__}: {e}')

@@ -15,11 +15,6 @@
     </p>
     <div class="edittable-testauto-con">
       <Form ref="formValidate" :model="formItem" :label-width="100" :rules="ruleInline">
-        <Form-item label="机房:">
-          <Select v-model="formItem.add" placeholder="请选择">
-            <Option v-for="list in dataset" :value="list" :key="list">{{ list }}</Option>
-          </Select>
-        </Form-item>
         <Form-item label="连接名称:" prop="name">
           <Input v-model="formItem.name" placeholder="请输入"></Input>
         </Form-item>
@@ -327,7 +322,6 @@ export default {
           let data = {
             'connection_name': this.formItem.name,
             'ip': this.formItem.ip,
-            'computer_room': this.formItem.add,
             'username': this.formItem.username,
             'password': this.formItem.password,
             'port': this.formItem.port

@@ -16,15 +16,9 @@
           <div id="showImage" class="margin-bottom-10">
 
             <Form ref="formItem" :model="formItem" :rules="ruleValidate" :label-width="80">
-              <FormItem label="机房:" prop="computer_room">
-                <Select v-model="formItem.computer_room" @on-change="Connection_Name">
-                  <Option v-for="i in datalist.computer_roomlist" :key="i" :value="i" >{{i}}</Option>
-                </Select>
-              </FormItem>
-
               <FormItem label="连接名:" prop="connection_name">
                 <Select v-model="formItem.connection_name" @on-change="DataBaseName" filterable>
-                  <Option v-for="i in datalist.connection_name_list" :value="i.connection_name" :key="i.connection_name">{{ i.connection_name }}</Option>
+                  <Option v-for="i in datalist.connection_name_list" :value="i" :key="i">{{ i }}</Option>
                 </Select>
               </FormItem>
 
@@ -118,7 +112,6 @@
       return {
         validate_gen: true,
         formItem: {
-          computer_room: '',
           connection_name: '',
           basename: '',
           text: '',
@@ -134,11 +127,6 @@
           computer_roomlist: util.computer_room
         },
         ruleValidate: {
-          computer_room: [{
-            required: true,
-            message: '机房地址不得为空',
-            trigger: 'change'
-          }],
           connection_name: [{
             required: true,
             message: '连接名不得为空',
@@ -306,6 +294,7 @@
         .then(res => {
           this.item = res.data['connection']
           this.assigned = res.data['assigend']
+          this.datalist.connection_name_list = res.data.database;
         })
         .catch(error => {
           util.ajanxerrorcode(this, error)
