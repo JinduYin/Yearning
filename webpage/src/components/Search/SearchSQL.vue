@@ -58,7 +58,6 @@
         <Button type="error" icon="trash-a" @click.native="ClearForm()">清除</Button>
         <Button type="info" icon="paintbucket" @click.native="beautify()">美化</Button>
         <Button type="success" icon="ios-redo" @click.native="Search_sql()">查询</Button>
-        <Button type="primary" icon="ios-cloud-download" @click.native="exportdata()">导出查询数据</Button>
         <br>
         <br>
         <p>查询结果<span v-model="limitPrompt" v-bind:style="limitStyle">{{ limitPrompt }}</span>:</p>

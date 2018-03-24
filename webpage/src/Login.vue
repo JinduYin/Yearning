@@ -18,7 +18,7 @@
   <div class="div-a">
     <div style='margin-left: 10%'>
       <Icon type="cube" size="60" style="margin-top:5%"></Icon>
-      <p style="margin-left: 20%;margin-top: -10%;font-size: 20px">Yearning SQL 审核平台</p>
+      <p style="margin-left: 20%;margin-top: -10%;font-size: 20px">TCSQL 审核平台</p>
     </div>
     <br>
     <Card>
@@ -36,7 +36,7 @@
         <Form-item style="width: 100%">
           <Button type="primary" @click="authdata()" style="width: 100%" size="large">登录</Button>
           <p style="margin-left: 22%;margin-top: 2%">如需注册账号请联系平台管理员</p>
-          <p style="margin-left: 5%;">2018 © Power By Cookie.Ye 使用chrome获得最佳体验</p>
+          <p style="margin-left: 5%;">2018 © Power  使用chrome获得最佳体验</p>
         </Form-item>
       </Form>
         </TabPane>
