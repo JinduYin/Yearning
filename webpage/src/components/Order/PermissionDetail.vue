@@ -35,26 +35,32 @@
           <FormItem label="DDL提交权限:">
             <p>{{permission.ddl}}</p>
           </FormItem>
-          <FormItem label="可访问的连接名:" v-if="permission.ddl === '是'">
+          <FormItem label="可访问的数据库:" v-if="permission.ddl === '是'">
             <p>{{permission.ddlcon}}</p>
           </FormItem>
           <FormItem label="DML提交权限:">
             <p>{{permission.dml}}</p>
           </FormItem>
-          <FormItem label="可访问的连接名:" v-if="permission.dml === '是'">
+          <FormItem label="可访问的数据库:" v-if="permission.dml === '是'">
             <p>{{permission.dmlcon}}</p>
           </FormItem>
           <FormItem label="字典查看权限:">
             <p>{{permission.dic}}</p>
           </FormItem>
-          <FormItem label="可访问的连接名:" v-if="permission.dic === '是'">
+          <FormItem label="可访问的数据库:" v-if="permission.dic === '是'">
             <p>{{permission.diccon}}</p>
           </FormItem>
           <FormItem label="数据查询权限:">
             <p>{{permission.query}}</p>
           </FormItem>
-          <FormItem label="可访问的连接名:" v-if="permission.query === '是'">
+          <FormItem label="可访问的数据库:" v-if="permission.query === '是'">
             <p>{{permission.querycon}}</p>
+          </FormItem>
+          <FormItem label="SQL导出权限:">
+            <p>{{permission.export}}</p>
+          </FormItem>
+          <FormItem label="可访问的数据库:" v-if="permission.export === '是'">
+            <p>{{permission.exportcon}}</p>
           </FormItem>
           <FormItem label="用户管理权限:">
             <p>{{permission.user}}</p>

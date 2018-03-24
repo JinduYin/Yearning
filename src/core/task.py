@@ -3,7 +3,6 @@ import logging
 import functools
 import threading
 import xlwt
-import configparser
 import time
 from datetime import datetime
 from libs import con_database
@@ -21,6 +20,8 @@ from .models import (
     grained
 )
 CUSTOM_ERROR = logging.getLogger('Yearning.core.views')
+CONF = util.conf_path()
+FILE_PATH = CONF.path
 
 
 def grained_permissions(func):
@@ -320,9 +321,7 @@ class ExportSql(threading.Thread):
 
         """
         try:
-            conf = configparser.ConfigParser()
-            conf.read('deploy.conf')
-            path = conf.get('sql', 'path')
+            path = FILE_PATH
             path = path + '/' if path[-1] != '/' else path
 
             record = SqlRecord(
@@ -357,7 +356,7 @@ class ExportSql(threading.Thread):
                 # excel
                 file_name = self.order.work_id \
                             + '_' \
-                            + datetime.now().strftime("%Y-%m-%d_%H:%M:%S") \
+                            + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") \
                             + '.xls'
                 file_path = path + file_name
                 workbook = xlwt.Workbook()

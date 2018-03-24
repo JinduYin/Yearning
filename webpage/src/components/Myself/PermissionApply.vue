@@ -97,6 +97,21 @@
                 </CheckboxGroup>
               </FormItem>
             </template>
+            <hr style="height:1px;border:none;border-top:1px dashed #dddee1;" />
+            <br>
+            <FormItem label="SQL导出:">
+              <RadioGroup v-model="permission.export">
+                <Radio label="1">是</Radio>
+                <Radio label="0">否</Radio>
+              </RadioGroup>
+            </FormItem>
+            <template v-if="permission.export === '1'">
+              <FormItem label="连接名:">
+                <CheckboxGroup v-model="permission.exportcon">
+                  <Checkbox  v-for="i in this.con" :label="i" :key="i">{{i}}</Checkbox>
+                </CheckboxGroup>
+              </FormItem>
+            </template>
           </template>
           <template v-if="this.userInfo.curGroup === 'admin'">
             <hr style="height:1px;border:none;border-top:1px dashed #dddee1;" />
@@ -158,11 +173,13 @@
           query: '0',
           user: '0',
           base: '0',
+          export: '0',
           ddlcon: [],
           dmlcon: [],
           diccon: [],
           querycon: [],
-          person: []
+          person: [],
+          exportcon: []
         },
         auditorsValidate: {
           curAuditor: {

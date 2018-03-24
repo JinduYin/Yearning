@@ -87,6 +87,7 @@
     },
     methods: {
       download_file () {
+        document.location.href = 'http://127.0.0.1:8000/api/v1/export/?file_name=201803231550099207_2018-03-23_17-26-48.xls';
       }
     },
     mounted () {

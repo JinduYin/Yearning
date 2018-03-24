@@ -198,6 +198,12 @@
         <FormItem label="可访问的连接名:" v-if="modal_perms.query === '是'">
           <p>{{modal_perms.querycon}}</p>
         </FormItem>
+        <FormItem label="SQL导出权限:">
+          <p>{{modal_perms.export}}</p>
+        </FormItem>
+        <FormItem label="可访问的数据库:" v-if="modal_perms.export === '是'">
+          <p>{{modal_perms.exportcon}}</p>
+        </FormItem>
         <FormItem label="用户管理权限:">
           <p>{{modal_perms.user}}</p>
         </FormItem>
@@ -512,7 +518,7 @@ export default {
           })
           this.modal_permission = false;
           this.$refs.page.currentPage = 1;
-          this.permission_data()
+          this.request_server(1, this.select_tab)
         })
         .catch(error => {
           util.ajanxerrorcode(this, error)
@@ -561,7 +567,7 @@ export default {
           key: 'work_id',
           sortable: true,
           sortType: 'desc',
-          width: 250
+          width: 200
         },
         {
           title: '工单说明:',
@@ -765,6 +771,7 @@ export default {
         this.columns_title.push({
             title: '状态',
             key: 'status',
+            width: 150,
             render: (h, params) => {
               const row = params.row;
               let color = '';

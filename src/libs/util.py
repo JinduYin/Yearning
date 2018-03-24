@@ -71,22 +71,29 @@ def conf_path() -> object:
     '''
     _conf = configparser.ConfigParser()
     _conf.read('deploy.conf')
-    conf_set = namedtuple("name", ["db", "address", "port", "username", "password", "ipaddress",
-                                   "inc_host", "inc_port", "inc_user", "inc_pwd", "backupdb",
-                                   "backupport", "backupuser", "backuppassword","ladp_server",
-                                   "ldap_scbase","ladp_domain", "ladp_type","mail_user","mail_password","smtp",
-                                   "smtp_port", "limit"])
+    tuple_element = [
+        "db", "address", "port", "username", "password", "ipaddress",
+        "inc_host", "inc_port", "inc_user", "inc_pwd", "backupdb", "backupport",
+        "backupuser", "backuppassword", "ladp_server", "ldap_scbase",
+        "ladp_domain", "ladp_type", "mail_user","mail_password","smtp",
+        "smtp_port", "limit", "path"
+    ]
+    conf_set = namedtuple("name", tuple_element)
 
-    return conf_set(_conf.get('mysql', 'db'), _conf.get('mysql', 'address'),
-                    _conf.get('mysql', 'port'), _conf.get('mysql', 'username'),
-                    _conf.get('mysql', 'password'), _conf.get('host', 'ipaddress'),
-                    _conf.get('Inception', 'ip'), _conf.get('Inception', 'port'),
-                    _conf.get('Inception', 'user'), _conf.get('Inception', 'password'),
-                    _conf.get('Inception', 'backupdb'), _conf.get('Inception', 'backupport'),
-                    _conf.get('Inception', 'backupuser'), _conf.get('Inception', 'backuppassword'),
-                    _conf.get('LDAP','LDAP_SERVER'),_conf.get('LDAP','LDAP_SCBASE'),_conf.get('LDAP','LDAP_DOMAIN'),_conf.get('LDAP','LDAP_TYPE'),
-                    _conf.get('email', 'username'), _conf.get('email', 'password'), _conf.get('email', 'smtp_server'),
-                    _conf.get('email', 'smtp_port'),_conf.get('sql', 'limit'))
+    return conf_set(
+        _conf.get('mysql', 'db'), _conf.get('mysql', 'address'),
+        _conf.get('mysql', 'port'), _conf.get('mysql', 'username'),
+        _conf.get('mysql', 'password'), _conf.get('host', 'ipaddress'),
+        _conf.get('Inception', 'ip'), _conf.get('Inception', 'port'),
+        _conf.get('Inception', 'user'), _conf.get('Inception', 'password'),
+        _conf.get('Inception', 'backupdb'), _conf.get('Inception', 'backupport'),
+        _conf.get('Inception', 'backupuser'), _conf.get('Inception', 'backuppassword'),
+        _conf.get('LDAP','LDAP_SERVER'), _conf.get('LDAP','LDAP_SCBASE'),
+        _conf.get('LDAP','LDAP_DOMAIN'), _conf.get('LDAP','LDAP_TYPE'),
+        _conf.get('email', 'username'), _conf.get('email', 'password'),
+        _conf.get('email', 'smtp_server'), _conf.get('email', 'smtp_port'),
+        _conf.get('sql', 'limit'), _conf.get('sql', 'path')
+    )
 
 def auth(username, password):
     conf = conf_path()

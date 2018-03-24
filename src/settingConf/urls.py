@@ -41,6 +41,7 @@ from core.api.myorder import order
 from core.api.gensql import gen_sql
 from core.api.general import addressing
 from core.api.permorder import UserPermission
+from core.api.export import ExportSql
 
 urlpatterns = [
     url(r'^api/v1/userinfo/(.*)', userinfo.as_view()),
@@ -69,5 +70,6 @@ urlpatterns = [
     url(r'^api/v1/download', downloadFile),
     url(r'^api-token-auth/', login_auth.as_view()),
     url(r'^api/v1/userpermission/(.*)', UserPermission.as_view()),
+    url(r'^api/v1/export/', ExportSql.as_view()),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)
