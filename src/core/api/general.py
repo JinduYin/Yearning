@@ -17,7 +17,8 @@ from libs.serializers import (
 
 CUSTOM_ERROR = logging.getLogger('Yearning.core.views')
 
-MYSQL_TABLE = []
+MYSQL_TABLE = ['information_schema', 'performance_schema',
+               'mysql',  'test', 'sys']
 
 
 class addressing(baseview.BaseView):

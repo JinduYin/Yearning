@@ -87,7 +87,15 @@
     },
     methods: {
       download_file () {
-        document.location.href = 'http://127.0.0.1:8000/api/v1/export/?file_name=201803231550099207_2018-03-23_17-26-48.xls';
+        axios.get(`${util.url}/export/?file_name=201803231550099207_2018-03-23_17-26-48.xls`)
+          .then(res => {
+            console.log(res.data)
+            console.log('------------')
+//            document.location.href = util.domain + url;
+          })
+          .catch(error => {
+            util.ajanxerrorcode(this, error)
+          });
       }
     },
     mounted () {
