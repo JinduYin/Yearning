@@ -76,6 +76,8 @@ class UserPermission(baseview.BaseView):
             dic_list = SqlDictionary.objects\
                 .values_list('Name', flat=True).distinct()
 
+            # audit_user = list(audit_user)
+            # audit_user.insert(0, '')
             data = dict(
                 permission=user_perm.permissions if user_perm else '',
                 username=user_info.username if user_info else '',

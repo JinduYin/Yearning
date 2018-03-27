@@ -205,6 +205,12 @@
         </FormItem>
         <template v-if="permission.export === '1'">
           <FormItem label="连接名:">
+            <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:6px;margin-bottom:6px;">
+              <Checkbox
+                :indeterminate="indeterminate.person"
+                :value="checkAll.person"
+                @click.prevent.native="ddlCheckAll('exportcon', 'export', 'connection')">全选</Checkbox>
+            </div>
             <CheckboxGroup v-model="permission.exportcon">
               <Checkbox  v-for="i in connectionList.connection" :label="i.connection_name" :key="i.connection_name">{{i.connection_name}}</Checkbox>
             </CheckboxGroup>
@@ -556,7 +562,8 @@ export default {
       connectionList: {
         connection: [],
         dic: [],
-        person: []
+        person: [],
+        export: []
       }
     }
   },

@@ -10,7 +10,7 @@
         权限申请
       </p>
       <div>
-        <Form  :label-width="150" :Input-width="300" label-position="right">
+        <Form :model="userInfo" ref="userInfo"  :label-width="150" :Input-width="300" label-position="right" :rules="ruleValidate">
           <FormItem label="用户">
             <Input v-model="userInfo.username" readonly="readonly" style="width: 200px;"></Input>
           </FormItem>
@@ -19,8 +19,8 @@
               <Option v-for="item in userInfo.groupList" :value="item.key" :key="item.key" >{{ item.value }}</Option>
             </Select>
           </FormItem>
-          <FormItem label="指定审核人">
-            <Select v-model="userInfo.curAuditor" placeholder="请选择" style="width: 200px;" :rules="auditorsValidate">
+          <FormItem label="指定审核人" prop="auditor">
+            <Select v-model="userInfo.curAuditor" placeholder="请选择" style="width: 200px;">
               <Option v-for="item in userInfo.auditors" :value="item" :key="item" >{{ item }}</Option>
             </Select>
           </FormItem>
@@ -131,12 +131,12 @@
               </RadioGroup>
             </FormItem>
           </template>
-          <FormItem label="备注">
+          <FormItem label="备注" prop="remark">
             <Input v-model="textarea" type="textarea" :autosize="{minRows: 2,maxRows: 5}" style="width: 400px;" placeholder="Enter something..."></Input>
           </FormItem>
         </Form>
         <div slot="footer">
-          <Button type="primary" @click="saveInfo">保存</Button>
+          <Button type="primary" @click="saveInfo">提交</Button>
         </div>
       </div>
     </Card>
@@ -181,18 +181,31 @@
           person: [],
           exportcon: []
         },
-        auditorsValidate: {
-          curAuditor: {
+        ruleValidate: {
+          auditor: [{
             required: true,
             message: '请输入审核人名',
             trigger: 'blur'
-          }
+          }],
+          remark: [{
+            required: true,
+            message: '说明不得为空',
+            trigger: 'blur'
+          }]
         }
       };
     },
     methods: {
       saveInfo () {
         this.permission.person = [this.userInfo.curAuditor];
+        if (!this.textarea || !this.userInfo.curAuditor) {
+          this.$Notice.warning({
+            title: '参数错误',
+            desc: '备注和审核人不能为空'
+          });
+          return
+        }
+
         axios.post(util.url + '/userpermission/', {
           'user': this.userInfo.username,
           'group': this.userInfo.curGroup,
@@ -226,7 +239,7 @@
           this.userInfo.curGroup = res.data.group;
           this.con = res.data.con;
           this.dicadd = res.data.dicadd;
-          this.userInfo.curAuditor = res.data.permission.person[0];
+//          this.userInfo.curAuditor = res.data.permission.person[0];
           this.userInfo.auditors = res.data.audituser;
         })
         .catch(error => {
