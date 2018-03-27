@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'core.apps.CoreConfig',
+    'django.contrib.staticfiles',
     'rest_framework'
 ]
 
@@ -112,7 +113,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -126,6 +126,8 @@ JWT_AUTH = {
         'rest_framework_jwt.utils.jwt_response_payload_handler',
     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=3000000),
 }
+
+STATIC_URL = '/static/'
 
 LOGGING = {
     'version': 1,

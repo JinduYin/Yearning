@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from django.http import HttpResponse
 from core.models import SqlOrder, SqlRecord
 from libs.serializers import Record
+from libs.serializers import SqlOrderDetail
 CUSTOM_ERROR = logging.getLogger('Yearning.core.views')
 
 
@@ -78,7 +79,8 @@ class order_detail(baseview.BaseView):
                 if status == '1':
                     data = SqlRecord.objects.filter(workid=work_id).all()
                     _serializers = Record(data, many=True)
-                    return Response({'data':_serializers.data, 'type':type_id.type})
+                    _serial_order = SqlOrderDetail(type_id)
+                    return Response({'data':_serializers.data, 'type':type_id.type, 'order': _serial_order.data})
                 else:
                     data = SqlOrder.objects.filter(work_id=work_id).first()
                     _in = {'data':[{'sql': x} for x in data.sql.split(';')], 'type':type_id.type}

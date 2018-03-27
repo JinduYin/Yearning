@@ -60,7 +60,6 @@
 </template>
 
 <script>
-//  import Cookies from 'js-cookie'
   import util from '../../libs/util'
   import axios from 'axios'
   export default {
@@ -87,24 +86,15 @@
     },
     methods: {
       download_file () {
-        axios.get(`${util.url}/export/?file_name=201803231550099207_2018-03-23_17-26-48.xls`)
-          .then(res => {
-            console.log(res.data)
-            console.log('------------')
-//            document.location.href = util.domain + url;
-          })
-          .catch(error => {
-            util.ajanxerrorcode(this, error)
-          });
+        window.location.href = `${util.url}/export/?file_name=${this.recordInfo.file_name}`;
       }
     },
     mounted () {
-      this.data = this.$route.query.data;
-      this.orderInfo = this.$route.query.data;
-      axios.get(`${util.url}/detail?id=${this.data.id}&workid=${this.data.work_id}&status=1`)
+      axios.get(`${util.url}/detail?id=${this.$route.query.id}&workid=${this.$route.query.workid}&status=1`)
         .then(res => {
           if (res.data.data.length >= 1) {
-            this.recordInfo = res.data.data[0]
+            this.recordInfo = res.data.data[0];
+            this.orderInfo = res.data.order
           }
         })
         .catch(error => {

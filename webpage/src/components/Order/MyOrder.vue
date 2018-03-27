@@ -313,7 +313,7 @@ export default {
                     click: () => {
                       this.$router.push({
                         name: 'exportsqldetail',
-                        query: {data: params.row}
+                        query: {id: params.row.id, workid: params.row.work_id}
                       })
                     }
                   }

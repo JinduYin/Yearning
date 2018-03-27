@@ -31,6 +31,7 @@ class ExportSql(baseview.BaseView):
     """
     导出sql生成的excel文件
     """
+    permission_classes = ()
 
     def get(self, request, args: str = None):
         data = request.GET.dict()
@@ -40,24 +41,21 @@ class ExportSql(baseview.BaseView):
         path = path + '/' if path[-1] != '/' else path
         path = path + file_name
 
-        return Response(dict(url=path))
+        def read_file(name, chunk_size=512):
+            with open(name, 'rb') as f:
+                while True:
+                    c = f.read(chunk_size)
+                    if c:
+                        yield c
+                    else:
+                        break
 
-        # 不用Django下载支持
-        # def read_file(name, chunk_size=512):
-        #     with open(name, encoding='ISO-8859-1') as f:
-        #         while True:
-        #             c = f.read(chunk_size)
-        #             if c:
-        #                 yield c
-        #             else:
-        #                 break
-        #
-        # response = StreamingHttpResponse(read_file(path))
-        # response['Content-Type'] = 'application/octet-stream'
-        # response['Content-Disposition'] = 'attachment;filename="{}"'.format(
-        #     file_name)
-        #
-        # return response
+        response = StreamingHttpResponse(read_file(path))
+        response['Content-Type'] = 'application/octet-stream'
+        response['Content-Disposition'] = 'attachment;filename="{}"'.format(
+            file_name)
+
+        return response
 
 
 

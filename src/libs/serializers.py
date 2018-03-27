@@ -84,3 +84,14 @@ class Recordinfo(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = SqlOrder
         fields = ('workid', 'username', 'text', 'data', 'basename', 'assigned')
+
+
+class SqlOrderDetail(serializers.HyperlinkedModelSerializer):
+    """
+    工单信息
+    """
+
+    class Meta:
+        model = SqlOrder
+        fields = ('work_id', 'username', 'status', 'type', 'backup',
+                  'bundle_id', 'date', 'basename', 'sql', 'text', 'assigned')
