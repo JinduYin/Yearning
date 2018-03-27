@@ -39,8 +39,8 @@
   <Row>
     <Card>
       <Select v-model="select_tab" slot="title" style="width:200px" @on-change="selectChangeAuditor">
-        <Option value="order" >普通工单</Option>
-        <Option value="sql" >SQL工单</Option>
+        <Option value="order" >SQL工单</Option>
+        <Option value="sql" >导出工单</Option>
         <Option value="permission" >权限工单</Option>
       </Select>
       <Row>

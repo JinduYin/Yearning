@@ -3,7 +3,7 @@ import Notice from 'iview/src/components/notice'
 import {appRouter} from '../router'
 let util = {};
 util.title = function (title) {
-  title = title || 'TC SQL审核平台';
+  title = title || 'TCSQL自助平台';
   window.document.title = title;
 };
 

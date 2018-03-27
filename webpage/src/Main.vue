@@ -85,7 +85,7 @@
   </div>
   <Modal
     v-model="statement"
-    title="欢迎使用TC SQL审核平台"
+    title="欢迎使用TCSQL自助平台"
     width="600"
     :mask-closable="false"
     :closable="false"
@@ -340,9 +340,6 @@ export default {
     axios.get(`${util.url}/homedata/messages?username=${Cookies.get('user')}`)
       .then(res => {
         this.$store.state.messageCount = res.data.count.messagecount
-        if (res.data.statement !== '1') {
-          this.statement = true
-        }
       })
   },
   created () {

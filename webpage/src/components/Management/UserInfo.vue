@@ -197,6 +197,19 @@
           </CheckboxGroup>
         </FormItem>
       </template>
+        <FormItem label="SQL导出:">
+          <RadioGroup v-model="permission.export">
+            <Radio label="1">是</Radio>
+            <Radio label="0">否</Radio>
+          </RadioGroup>
+        </FormItem>
+        <template v-if="permission.export === '1'">
+          <FormItem label="连接名:">
+            <CheckboxGroup v-model="permission.exportcon">
+              <Checkbox  v-for="i in connectionList.connection" :label="i.connection_name" :key="i.connection_name">{{i.connection_name}}</Checkbox>
+            </CheckboxGroup>
+          </FormItem>
+        </template>
       </template>
       <template v-if="this.editInfodForm.group === 'admin'">
         <hr style="height:1px;border:none;border-top:1px dashed #dddee1;" />
@@ -288,6 +301,8 @@ export default {
         indexcon: [],
         query: '0',
         querycon: [],
+        export: '0',
+        exportcon: [],
         user: '0',
         base: '0'
       },
