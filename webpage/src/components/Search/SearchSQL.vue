@@ -263,8 +263,7 @@
             'id': this.id[0].id
           })
             .then(res => {
-//              this.tableInfo = res.data
-              this.tableInfo = ['1111', '222', '333', '333', '333', '444', '5555', '666', '777', '888', 'aaaa'];
+              this.tableInfo = res.data
               this.tablePages = this.tableInfo.length;
               for (var i = 0; i < this.page_number; i++) {
                 if (i > this.tableInfo.length - 1) {
