@@ -419,15 +419,16 @@ export default {
       this.request_server(page, this.select_tab)
     },
     mou_data (vl = 1) {
-      axios.get(`${util.url}/audit_sql?page=${vl}&username=${Cookies.get('user')}`)
-        .then(res => {
-          this.tmp = res.data.data
-          this.tmp.forEach((item) => { (item.backup === 1) ? item.backup = '是' : item.backup = '否' })
-          this.pagenumber = res.data.page.alter_number
-        })
-        .catch(error => {
-          util.ajanxerrorcode(this, error)
-        })
+      this.request_server(1, this.select_tab)
+//      axios.get(`${util.url}/audit_sql?page=${vl}&username=${Cookies.get('user')}`)
+//        .then(res => {
+//          this.tmp = res.data.data
+//          this.tmp.forEach((item) => { (item.backup === 1) ? item.backup = '是' : item.backup = '否' })
+//          this.pagenumber = res.data.page.alter_number
+//        })
+//        .catch(error => {
+//          util.ajanxerrorcode(this, error)
+//        })
     },
     delrecordList (vl) {
       this.delrecord = vl

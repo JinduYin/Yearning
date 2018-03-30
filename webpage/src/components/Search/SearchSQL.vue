@@ -23,7 +23,7 @@
               </FormItem>
 
               <FormItem label="库名:" prop="basename">
-                <Select v-model="formItem.basename" filterable>
+                <Select v-model="formItem.basename" @on-change="getTableInfo" filterable>
                   <Option v-for="item in datalist.basenamelist" :value="item" :key="item">{{ item }}</Option>
                 </Select>
               </FormItem>
@@ -36,6 +36,13 @@
                 <p>注意:只支持select语句,其他语句统统不可达!</p>
               </template>
             </Alert>
+            <div class="tables">
+              <div v-for="i in this.currTableInfo" style="margin-top: 3%">
+                {{ i }}
+              </div>
+              <br/>
+              <Page :total="tablePages" simple style="margin-left: 10%" :page-size="page_number" @on-change="tableCurrentPage"></Page>
+            </div>
           </div>
         </div>
       </Card>
@@ -141,7 +148,11 @@
         limitStyle: {
           color: 'red',
           fontSize: '13px'
-        }
+        },
+        tableInfo: [],
+        currTableInfo: [],
+        tablePages: 0,
+        page_number: 3
       }
     },
     methods: {
@@ -243,6 +254,38 @@
           data: this.allsearchdata,
           columns: this.columnsName
         })
+      },
+      getTableInfo () {
+        if (this.formItem.basename) {
+          let data = JSON.stringify(this.formItem)
+          axios.put(`${util.url}/workorder/tablename`, {
+            'data': data,
+            'id': this.id[0].id
+          })
+            .then(res => {
+//              this.tableInfo = res.data
+              this.tableInfo = ['1111', '222', '333', '333', '333', '444', '5555', '666', '777', '888', 'aaaa'];
+              this.tablePages = this.tableInfo.length;
+              for (var i = 0; i < this.page_number; i++) {
+                if (i > this.tableInfo.length - 1) {
+                  return
+                }
+                this.currTableInfo.push(this.tableInfo[i])
+              }
+            }).catch(error => {
+            util.ajanxerrorcode(this, error)
+          })
+        }
+      },
+      tableCurrentPage (page) {
+        this.currTableInfo = [];
+        for (var i = this.page_number * page - 1; i < this.page_number * page - 1 + this.page_number; i++) {
+          if (i > this.tableInfo.length - 1) {
+            return
+          }
+          console.log(this.tableInfo[i])
+          this.currTableInfo.push(this.tableInfo[i])
+        }
       }
     },
     mounted () {
