@@ -48,6 +48,12 @@
           <FormItem label="可访问的连接名:" v-if="formItem.query === '是'">
             <p>{{formItem.querycon}}</p>
           </FormItem>
+          <FormItem label="SQL导出权限:">
+            <p>{{formItem.export}}</p>
+          </FormItem>
+          <FormItem label="可访问的连接名:" v-if="formItem.export === '是'">
+            <p>{{formItem.exportcon}}</p>
+          </FormItem>
           <FormItem label="用户管理权限:">
             <p>{{formItem.user}}</p>
           </FormItem>
@@ -240,6 +246,8 @@ export default {
           this.formItem.diccon = exchangetype(res.data.permissons.diccon)
           this.formItem.query = exchangetype(res.data.permissons.query)
           this.formItem.querycon = exchangetype(res.data.permissons.querycon)
+          this.formItem.export = exchangetype(res.data.permissons.export)
+          this.formItem.exportcon = exchangetype(res.data.permissons.exportcon)
           this.formItem.user = exchangetype(res.data.permissons.user)
           this.formItem.base = exchangetype(res.data.permissons.base)
         })

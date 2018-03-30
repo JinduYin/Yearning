@@ -28,6 +28,14 @@
                 </Select>
               </FormItem>
             </Form>
+            <div class="tables">
+              <div v-for="i in this.currTableInfo" style="margin-top: 3%;margin-left: 20px;">
+                {{ i }}
+              </div>
+              <br/>
+              <Page :total="tablePages" simple :page-size="page_number" @on-change="tableCurrentPage"></Page>
+            </div>
+            <br/>
             <Alert style="height: 145px">
               SQL查询注意事项:
               <template slot="desc">
@@ -36,13 +44,6 @@
                 <p>注意:只支持select语句,其他语句统统不可达!</p>
               </template>
             </Alert>
-            <div class="tables">
-              <div v-for="i in this.currTableInfo" style="margin-top: 3%">
-                {{ i }}
-              </div>
-              <br/>
-              <Page :total="tablePages" simple style="margin-left: 10%" :page-size="page_number" @on-change="tableCurrentPage"></Page>
-            </div>
           </div>
         </div>
       </Card>
@@ -152,7 +153,7 @@
         tableInfo: [],
         currTableInfo: [],
         tablePages: 0,
-        page_number: 3
+        page_number: 10
       }
     },
     methods: {
@@ -278,11 +279,10 @@
       },
       tableCurrentPage (page) {
         this.currTableInfo = [];
-        for (var i = this.page_number * page - 1; i < this.page_number * page - 1 + this.page_number; i++) {
+        for (var i = this.page_number * (page - 1); i < this.page_number * (page - 1) + this.page_number; i++) {
           if (i > this.tableInfo.length - 1) {
             return
           }
-          console.log(this.tableInfo[i])
           this.currTableInfo.push(this.tableInfo[i])
         }
       }
