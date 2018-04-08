@@ -227,7 +227,7 @@ class messages(baseview.BaseView):
             return HttpResponse(status=500)
 
 
-class ConfigInfo(baseview.SuperUserpermissions):
+class ConfigInfo(baseview.BaseView):
     """
     提供配置文件获取接口
     只获取limit数，做固定值

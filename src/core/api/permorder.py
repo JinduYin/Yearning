@@ -191,16 +191,17 @@ class UserPermission(baseview.BaseView):
         if args == 'orderconfirm':
             data = request.data
             username = data.get('user')
+            manager = data.get('manager')
             oid = data.get('id')
             status = data.get('status')
 
             params = dict(id=oid)
             update_params = dict(status=status)
             if status == 2:
-                params['auditor'] = username
+                params['auditor'] = manager
                 update_params['executor'] = data.get('executor')
             else:
-                params['executor'] = username
+                params['executor'] = manager
 
             # 更新权限表
             is_exists = PermOrder.objects.filter(**params).exists()

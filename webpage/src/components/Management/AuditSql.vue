@@ -508,7 +508,8 @@ export default {
     update_permission_status (status) {
       axios.put(`${util.url}/userpermission/orderconfirm`, {
         'status': status,
-        'user': Cookies.get('user'),
+        'manager': Cookies.get('user'),
+        'user': this.modal_perm_data.username,
         'id': this.modal_perm_data.id,
         'executor': 'admin'
       })
