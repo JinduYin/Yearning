@@ -17,13 +17,17 @@ from core.models import (
     PermOrder
 )
 from libs.util import get_current_datetime
-from libs.send_email import tc_send_mail
+from core.task import submit_push_messages
+from core.task import order_push_message,rejected_push_messages
 from core.api.myorder import ADMIN
 
 CUSTOM_ERROR = logging.getLogger('Yearning.core.views')
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+
+conf = util.conf_path()
+addr_ip = conf.ipaddress
 
 
 class UserPermission(baseview.BaseView):
@@ -181,14 +185,14 @@ class UserPermission(baseview.BaseView):
             try:
                 obj = PermOrder.objects.create(**data)
 
-                # send mail
-                send_data = dict(
-                    work_id=data.get('work_id'),
-                    to_user=data.get('username'),
+                submit_push_messages(
+                    workId=data.get('work_id'),
+                    user=data.get('username'),
+                    addr_ip=addr_ip,
                     text=data.get('text'),
-                    note='',
-                )
-                tc_send_mail(data.get('auditor'), send_data)
+                    assigned=data['auditor'],
+                    id=-1
+                ).start()
 
                 return Response(dict(
                     msg='%s--工单提供成功!' % data.get('username'),
@@ -250,13 +254,22 @@ class UserPermission(baseview.BaseView):
 
                 if status == 2:
                     send_data['note'] = '工单审核完成'
-                    tc_send_mail(order.executor, send_data)
+                    submit_push_messages(
+                        workId=order.work_id,
+                        user=order.username,
+                        addr_ip=addr_ip,
+                        text=order.text,
+                        assigned=order.executor,
+                        id=-1
+                    ).start()
                 else:
                     if status == 0:
-                        send_data['note'] = '工单驳回'
-                        tc_send_mail(order.username, send_data, 1)
+                        rejected_push_messages(dict(work_id=order.work_id,
+                                                    bundle_id=''),
+                                               order.username, addr_ip,
+                                               order.text).start()
                     else:
-                        tc_send_mail(order.username, send_data, 0)
+                        order_push_message(addr_ip, order.id, order.executor, order.username, True).start()
 
                 return Response('%s--工单确认成功!' % username)
             else:

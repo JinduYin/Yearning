@@ -4,7 +4,6 @@ from libs import send_email
 from libs import baseview
 from libs import call_inception
 from libs import util
-from libs.send_email import tc_send_mail
 from core.task import submit_push_messages
 from rest_framework.response import Response
 from django.http import HttpResponse
@@ -108,15 +107,6 @@ class sqlorder(baseview.BaseView):
                     assigned=data['assigned'],
                     id=id
                 ).start()
-
-                # send mail
-                send_data = dict(
-                    work_id=workId,
-                    to_user=user,
-                    text=data['text'],
-                    note='',
-                )
-                tc_send_mail(data['assigned'], send_data)
                 return Response('已提交，请等待管理员审核!')
             except Exception as e:
                 CUSTOM_ERROR.error(f'{e.__class__.__name__}: {e}')

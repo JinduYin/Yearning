@@ -16,6 +16,7 @@ from .models import (
     Account,
     globalpermissions,
     SqlOrder,
+    PermOrder,
     SqlRecord,
     grained
 )
@@ -55,17 +56,22 @@ class order_push_message(threading.Thread):
 
     '''
 
-    def __init__(self, addr_ip, id, from_user, to_user):
+    def __init__(self, addr_ip, id, from_user, to_user, is_permission=False):
         super().__init__()
         self.id = id
         self.addr_ip = addr_ip
-        self.order = SqlOrder.objects.filter(id=id).first()
         self.from_user = from_user
         self.to_user = to_user
+        self.is_permission = is_permission
+        if not self.is_permission:
+            self.order = SqlOrder.objects.filter(id=id).first()
+        else:
+            self.order = PermOrder.objects.filter(id=id).first()
         self.title = f'工单:{self.order.work_id}审核通过通知'
 
     def run(self):
-        self.execute()
+        if not self.is_permission:
+            self.execute()
         self.agreed()
 
     def execute(self):
@@ -136,7 +142,10 @@ class order_push_message(threading.Thread):
             state='unread'
         )
 
-        content = DatabaseList.objects.filter(id=self.order.bundle_id).first()
+        if not self.is_permission:
+            content = DatabaseList.objects.filter(id=self.order.bundle_id).first()
+        else:
+            content = None
         mail = Account.objects.filter(username=self.to_user).first()
         tag = globalpermissions.objects.filter(authorization='global').first()
 
@@ -144,7 +153,7 @@ class order_push_message(threading.Thread):
             pass
         else:
             try:
-                if content.url:
+                if content and content.url:
                     util.dingding(
                         content='工单执行通知\n工单编号:%s\n发起人:%s\n地址:%s\n工单备注:%s\n状态:同意\n备注:%s'
                                 % (self.order.work_id, self.order.username, self.addr_ip, self.order.text, content.after), url=content.url)
@@ -161,7 +170,7 @@ class order_push_message(threading.Thread):
                         'to_user': self.order.username,
                         'addr': self.addr_ip,
                         'text': self.order.text,
-                        'note': content.after}
+                        'note': content.after if content else ''}
                     put_mess = send_email.send_email(to_addr=mail.email)
                     put_mess.send_mail(mail_data=mess_info, type=0)
             except Exception as e:
@@ -201,14 +210,17 @@ class rejected_push_messages(threading.Thread):
         :return: none
 
         '''
-        content = DatabaseList.objects.filter(id=self._tmpData['bundle_id']).first()
+        if self._tmpData.get('bundle_id'):
+            content = DatabaseList.objects.filter(id=self._tmpData['bundle_id']).first()
+        else:
+            content = None
         mail = Account.objects.filter(username=self.to_user).first()
         tag = globalpermissions.objects.filter(authorization='global').first()
         if tag is None or tag.dingding == 0:
             pass
         else:
             try:
-                if content.url:
+                if content and content.url:
                     util.dingding(
                         content='工单驳回通知\n工单编号:%s\n发起人:%s\n地址:%s\n驳回说明:%s\n状态:驳回'
                                 % (self._tmpData['work_id'], self.to_user, self.addr_ip, self.text), url=content.url)
@@ -271,7 +283,7 @@ class submit_push_messages(threading.Thread):
         if tag is None or tag.dingding == 0:
             pass
         else:
-            if content.url:
+            if content and  content.url:
                 try:
                     util.dingding(
                         content='工单提交通知\n工单编号:%s\n发起人:%s\n地址:%s\n工单说明:%s\n状态:已提交\n备注:%s'
@@ -287,7 +299,7 @@ class submit_push_messages(threading.Thread):
                     'to_user': self.user,
                     'addr': self.addr_ip,
                     'text': self.text,
-                    'note': content.before}
+                    'note': content.before if content else ''}
                 try:
                     put_mess = send_email.send_email(to_addr=mail.email)
                     put_mess.send_mail(mail_data=mess_info, type=2)
