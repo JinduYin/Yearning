@@ -14,6 +14,7 @@ from core.models import (
 
 from core.task import order_push_message,rejected_push_messages
 from core.task import ExportSql
+from libs.send_email import tc_send_mail
 
 conf = util.conf_path()
 addr_ip = conf.ipaddress
@@ -103,7 +104,8 @@ class audit(baseview.SuperUserpermissions):
                     return HttpResponse(status=500)
                 else:
                     try:
-                        SqlOrder.objects.filter(id=order_id).update(status=0)
+                        order = SqlOrder.objects.filter(id=order_id)
+                        order.update(status=0)
                         _tmpData = SqlOrder.objects.filter(id=order_id).values(
                             'work_id',
                             'bundle_id'
@@ -118,6 +120,16 @@ class audit(baseview.SuperUserpermissions):
                             state='unread'
                         )
                         rejected_push_messages(_tmpData, to_user, addr_ip, text).start()
+
+                        # send mail
+                        order = order.first()
+                        send_data = dict(
+                            work_id=order.work_id,
+                            to_user=order.username,
+                            text=order.text,
+                            note=text,
+                        )
+                        tc_send_mail(order.username, send_data, 1)
                         return Response('操作成功，该请求已驳回！')
                     except Exception as e:
                         CUSTOM_ERROR.error(f'{e.__class__.__name__}: {e}')
@@ -134,11 +146,22 @@ class audit(baseview.SuperUserpermissions):
                     return HttpResponse(status=500)
                 else:
                     try:
-                        SqlOrder.objects.filter(id=order_id).update(status=3)
+                        order = SqlOrder.objects.filter(id=order_id)
+                        order.update(status=3)
                         if is_export:
                             ExportSql(addr_ip, order_id, from_user, to_user).start()
                         else:
                             order_push_message(addr_ip, order_id, from_user, to_user).start()
+
+                        # send mail
+                        order = order.first()
+                        send_data = dict(
+                            work_id=order.work_id,
+                            to_user=order.username,
+                            text=order.text,
+                            note='工单执行完成',
+                        )
+                        tc_send_mail(order.username, send_data)
                         return Response('工单执行成功!请通过记录页面查看具体执行结果')
                     except Exception as e:
                         CUSTOM_ERROR.error(f'{e.__class__.__name__}: {e}')

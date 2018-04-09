@@ -17,6 +17,7 @@ from core.models import (
     PermOrder
 )
 from libs.util import get_current_datetime
+from libs.send_email import tc_send_mail
 from core.api.myorder import ADMIN
 
 CUSTOM_ERROR = logging.getLogger('Yearning.core.views')
@@ -179,6 +180,16 @@ class UserPermission(baseview.BaseView):
 
             try:
                 obj = PermOrder.objects.create(**data)
+
+                # send mail
+                send_data = dict(
+                    work_id=data.get('work_id'),
+                    to_user=data.get('username'),
+                    text=data.get('text'),
+                    note='',
+                )
+                tc_send_mail(data.get('auditor'), send_data)
+
                 return Response(dict(
                     msg='%s--工单提供成功!' % data.get('username'),
                     id=obj.id
@@ -225,7 +236,28 @@ class UserPermission(baseview.BaseView):
                 account.save()
 
             if is_exists:
-                PermOrder.objects.filter(id=oid).update(**update_params)
+                order = PermOrder.objects.filter(id=oid)
+                order.update(**update_params)
+
+                # send mail
+                order = order.first()
+                send_data = dict(
+                    work_id=order.work_id,
+                    to_user=order.username,
+                    text=order.text,
+                    note='工单执行完成',
+                )
+
+                if status == 2:
+                    send_data['note'] = '工单审核完成'
+                    tc_send_mail(order.executor, send_data)
+                else:
+                    if status == 0:
+                        send_data['note'] = '工单驳回'
+                        tc_send_mail(order.username, send_data, 1)
+                    else:
+                        tc_send_mail(order.username, send_data, 0)
+
                 return Response('%s--工单确认成功!' % username)
             else:
                 return HttpResponse(status=500)
