@@ -234,8 +234,10 @@ class UserPermission(baseview.BaseView):
 
                     if perm.usergroup == 'admin' and account.is_staff != 1:
                         account.is_staff = 1
+                        account.group = 'admin'
                     elif perm.usergroup == 'guest' and account.is_staff != 0:
                         account.is_staff = 0
+                        account.group = 'guest'
 
                 account.save()
 

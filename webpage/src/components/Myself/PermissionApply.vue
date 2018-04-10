@@ -186,12 +186,13 @@
             required: true,
             message: '请输入审核人名',
             trigger: 'blur'
-          }],
-          remark: [{
-            required: true,
-            message: '说明不得为空',
-            trigger: 'blur'
           }]
+//          remark: [{
+//            required: true,
+//            message: '说明不得为空',
+//            trigger: 'blur'
+//          }
+//          ]
         }
       };
     },

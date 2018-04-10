@@ -92,25 +92,38 @@ export default {
         this.columns_title = [
           {
             title: '工单编号:',
-            key: 'id',
+            key: 'work_id',
             sortable: true
           }, {
             title: '工单说明',
             key: 'text'
           }, {
             title: '提交时间:',
-            key: 'datetime',
+            key: 'date',
             sortable: true
           }, {
             title: '用户组',
-            key: 'usergroup'
+            key: 'usergroup',
+            width: 115
           }, {
             title: '提交人',
             key: 'username',
-            sortable: true
+            sortable: true,
+            width: 115
+          }, {
+            title: '审核人',
+            key: 'auditor',
+            sortable: true,
+            width: 115
+          }, {
+            title: '执行人',
+            key: 'executor',
+            sortable: true,
+            width: 115
           }, {
             title: '状态',
             key: 'status',
+            width: 150,
             render: (h, params) => {
               const row = params.row;
               let color = '';
@@ -168,6 +181,7 @@ export default {
             title: '操作',
             key: 'action',
             align: 'center',
+            width: 150,
             render: (h, params) => {
               return h('div', [
                 h('Button', {

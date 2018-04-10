@@ -251,7 +251,7 @@ export const exportSqlDetail = {
   children: [
     {
       path: 'exportsqldetail',
-      title: '权限详情',
+      title: 'SQL导出',
       name: 'exportsqldetail',
       component: resolve => {
         require(['./components/Order/ExportSqlDetail.vue'], resolve)
